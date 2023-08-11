@@ -1,10 +1,4 @@
-FROM centos:7
-WORKDIR /opt
-RUN yum install java-11 -y 
-ADD https://dlcdn.apache.org/tomcat/tomcat-10/v10.1.11/bin/apache-tomcat-10.1.11.tar.gz .
-RUN tar -xvzf apache-tomcat-10.1.11.tar.gz
-RUN mv apache-tomcat-10.1.11 tomcat
+FROM openjdk:8
 EXPOSE 8080
-CMD ["/opt/tomcat/bin/catalina.sh", "run"]
-
-======= docker build -f nikhil -t tomcat .=======
+ADD target/devops-integration.jar devops-integration.jar
+ENTRYPOINT ["java","-jar","/devops-integration.jar"]
