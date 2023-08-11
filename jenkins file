@@ -1,5 +1,3 @@
-
-
 pipeline {
     agent any
     tools {
@@ -19,24 +17,24 @@ pipeline {
                 sshagent(['dockerid']) {
                     sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker --version'"
                     sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker rmi jenbuildimg'"
-                    sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker build -t jenbuildimg .'"
+                    sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker build -t imgname .'"
                 }
             }
         }
         stage("tag image") {
             steps {
                 sshagent(['dockerid']) {
-                    sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker tag jenbuildimg nikhiltuthika/j-d-integration'"
+                    sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker tag imgname dusername/dreponame'"
                 }
             }
         }
         stage("push image to dockerhub") {
             steps {
 			//withCredentials in pipeline script
-                withCredentials([string(credentialsId: 'dockerhub', variable: 'dockerhub')]) {
+                withCredentials([string(credentialsId: 'credid', variable: 'variableid')]) {
                     sshagent(['dockerid']) {
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker login -u nikhiltuthika -p $dockerhub'"
-                        sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker push nikhiltuthika/j-d-integration'"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker login -u username -p $variableid'"
+                        sh "ssh -o StrictHostKeyChecking=no ec2-user@15.206.82.192 'docker push username/repo'"
                     }
                 }
             }
